@@ -1,3 +1,3 @@
 # QAMOVIE
 
-Progetto di Inteligenza Artificiale 2 
+Progetto di Intelligenza Artificiale 2 
