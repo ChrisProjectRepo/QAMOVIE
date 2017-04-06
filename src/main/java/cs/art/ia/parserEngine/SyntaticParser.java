@@ -113,11 +113,40 @@ public class SyntaticParser {
                 // Visita l'albero prodotto da UIMA creando parallelamente l'albero di parsing
                 treeVisit(annotation, mBinaryTree.getRoot());
 
-                createObjectTree(annotation,new BinaryTree(new Node(SyntaticParserEngine.SBARQ, new ArrayList<Node>(), null)).getRoot());
-                firstTime=true;
                 createPredicateTree(annotation,new BinaryTree(new Node(SyntaticParserEngine.SBARQ, new ArrayList<Node>(), null)).getRoot());
                 firstTime=true;
+                if(predicateTree!=null){
+                    if(Kernel.getIstance().getControlleGui().getShowTreeDebug().isSelected())
+                        printTreeForGUI(predicateTree);
+                    predicate=determinateTreeResource(predicateTree.getRoot());
+                    List<String> splitting=new ArrayList<>();
+                    splitting=(Arrays.asList(predicate.split(" ")));
+                    if(splitting.size()==1)
+                        predicate=splitting.get(0);
+                    System.out.println("PREDICATO:"+predicate);
+                }
+
+                createObjectTree(annotation,new BinaryTree(new Node(SyntaticParserEngine.SBARQ, new ArrayList<Node>(), null)).getRoot());
+                firstTime=true;
+                //Fai un print dell'albero
+                if(objectTree!=null){
+                    if(Kernel.getIstance().getControlleGui().getShowTreeDebug().isSelected())
+                        printTreeForGUI(objectTree);
+                    Pattern MY_PATTERN = Pattern.compile("([A-Z].+)");
+                    Matcher m = MY_PATTERN.matcher(determinateTreeResource(objectTree.getRoot()));
+                    while (m.find()) {
+                        object= m.group(1);
+                    }
+                    System.out.println("OGGETTO:"+object);
+                }
+
                 createSubjectTree(annotation, new BinaryTree(new Node(SyntaticParserEngine.SBARQ, new ArrayList<Node>(), null)).getRoot(),false);
+                if(subjectTree!=null){
+                    if(Kernel.getIstance().getControlleGui().getShowTreeDebug().isSelected())
+                        printTreeForGUI(subjectTree);
+                    subject=determinateTreeResource(subjectTree.getRoot());
+                    System.out.println("SOGGETTO:"+subject);
+                }
 
                 break;
             }
@@ -128,35 +157,9 @@ public class SyntaticParser {
         printTreeForGUI(mBinaryTree);
 
 
-            //Fai un print dell'albero
-            if(objectTree!=null){
-                if(Kernel.getIstance().getControlleGui().getShowTreeDebug().isSelected())
-                printTreeForGUI(objectTree);
-                Pattern MY_PATTERN = Pattern.compile("([A-Z].+)");
-                Matcher m = MY_PATTERN.matcher(determinateTreeResource(objectTree.getRoot()));
-                while (m.find()) {
-                    object= m.group(1);
-                }
-                System.out.println("OGGETTO:"+object);
-            }
 
-            if(predicateTree!=null){
-                if(Kernel.getIstance().getControlleGui().getShowTreeDebug().isSelected())
-                printTreeForGUI(predicateTree);
-                predicate=determinateTreeResource(predicateTree.getRoot());
-                List<String> splitting=new ArrayList<>();
-                splitting=(Arrays.asList(predicate.split(" ")));
-                if(splitting.size()==1)
-                    predicate=splitting.get(0);
-                System.out.println("PREDICATO:"+predicate);
-            }
 
-            if(subjectTree!=null){
-                if(Kernel.getIstance().getControlleGui().getShowTreeDebug().isSelected())
-                printTreeForGUI(subjectTree);
-                subject=determinateTreeResource(subjectTree.getRoot());
-                System.out.println("SOGGETTO:"+subject);
-            }
+
 
 
 
@@ -269,14 +272,14 @@ public class SyntaticParser {
                     String partOfSpeech = ((Token) childNodeSpanningTree).getPos().getPosValue();
                     if(D) log.info("Nodo PoS Token, partOfSpeech: " + partOfSpeech + " coveredText: " + childNodeSpanningTree.getCoveredText());
 
-                    //Crea un nuovo nodo Terminal e lo aggiunge all'albero di parsing BinaryTree
-                    Terminal newChildNodeBinaryTree = new Terminal(partOfSpeech, new ArrayList<Node>(), nodeBinaryTree);
-                    nodeBinaryTree.getChildren().add(newChildNodeBinaryTree);
-
-                    // Setta il valore "data" del nodo con la stringa coperta dal preterminale
-                    nodeBinaryTree.getChildren().get(nodeBinaryTree.getChildren().lastIndexOf(newChildNodeBinaryTree)).setData(childNodeSpanningTree.getCoveredText());
-                    if(D) log.info("Terminal: nodo PoS Token aggiunto a BinaryTree: " + newChildNodeBinaryTree.getData());
-
+                    if (!predicate.equals(childNodeSpanningTree.getCoveredText())){
+                        //Crea un nuovo nodo Terminal e lo aggiunge all'albero di parsing BinaryTree
+                        Terminal newChildNodeBinaryTree = new Terminal(partOfSpeech, new ArrayList<Node>(), nodeBinaryTree);
+                        nodeBinaryTree.getChildren().add(newChildNodeBinaryTree);
+                        // Setta il valore "data" del nodo con la stringa coperta dal preterminale
+                        nodeBinaryTree.getChildren().get(nodeBinaryTree.getChildren().lastIndexOf(newChildNodeBinaryTree)).setData(childNodeSpanningTree.getCoveredText());
+                        if(D) log.info("Terminal: nodo PoS Token aggiunto a BinaryTree: " + newChildNodeBinaryTree.getData());
+                    }
                 }
             }
         }
