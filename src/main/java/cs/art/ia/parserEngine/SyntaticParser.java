@@ -59,8 +59,8 @@ public class SyntaticParser {
         Kernel.getIstance().getControlleGui().appendResult("\nFine caricamento UIMAfit (creazione JCAS)");
 
         uimaContainer.setDocumentText(userInput);
-        uimaContainer.setDocumentLanguage(SyntaticParserEngine.ENGLISH);
 
+        uimaContainer.setDocumentLanguage(SyntaticParserEngine.ENGLISH);
         // Launch an internal parser exception.
         try {
             if(SyntaticParserEngine.getInstance().getEngineAtWork().equals("Simple")){
@@ -74,6 +74,7 @@ public class SyntaticParser {
             }
             Kernel.getIstance().getControlleGui().appendResult("\nFine caricamento pipeline Parser ");
         } catch (AnalysisEngineProcessException e) {
+
             Platform.runLater(new Runnable(){@Override public void run() {
                 Alert alert=new Alert(Alert.AlertType.ERROR);
                 alert.setContentText("Parser Creation Exception");
@@ -96,6 +97,7 @@ public class SyntaticParser {
 
         boolean isQuestionInput = false;
         FSIterator<Annotation> iterAnn = jcas.getAnnotationIndex().iterator();
+        System.out.println("Analizzo la question");
         while (iterAnn.hasNext()) {
             Annotation annotation = iterAnn.next();
             if (annotation instanceof SBARQ || annotation instanceof SQ ) {
@@ -120,6 +122,7 @@ public class SyntaticParser {
                 break;
             }
         }
+
 
         if(Kernel.getIstance().getControlleGui().getShowTree().isSelected())
         printTreeForGUI(mBinaryTree);
@@ -352,19 +355,19 @@ public class SyntaticParser {
         firstTime=true;
     }
 
-    private void findAll(String partOfSpeech,Annotation childNodeSpanningTree,Node nodeBinaryTree) {
+    private void findAll(String pos,Annotation childNodeSpanningTree,Node nodeBinaryTree) {
 
-        if (partOfSpeech.equals(SyntaticParserEngine.NN) || partOfSpeech.equals(SyntaticParserEngine.NNS) || partOfSpeech.equals(SyntaticParserEngine.NNP) || partOfSpeech.equals(SyntaticParserEngine.NNPS) || partOfSpeech.equals(SyntaticParserEngine.VB) || partOfSpeech.equals(SyntaticParserEngine.VBD) || partOfSpeech.equals(SyntaticParserEngine.VBG) || partOfSpeech.equals(SyntaticParserEngine.VBN) || partOfSpeech.equals(SyntaticParserEngine.VBP) || partOfSpeech.equals(SyntaticParserEngine.VBZ)) {
+        String partOfSpeech=pos;
+
+        if (partOfSpeech.equals(SyntaticParserEngine.NN) || partOfSpeech.equals(SyntaticParserEngine.NNS) || partOfSpeech.equals(SyntaticParserEngine.NNP) || partOfSpeech.equals(SyntaticParserEngine.NNPS) || partOfSpeech.equals(SyntaticParserEngine.VB) || partOfSpeech.equals(SyntaticParserEngine.VBD) || partOfSpeech.equals(SyntaticParserEngine.VBG) || partOfSpeech.equals(SyntaticParserEngine.VBN) || partOfSpeech.equals(SyntaticParserEngine.VBP) || partOfSpeech.equals(SyntaticParserEngine.VBZ)|| partOfSpeech.equals(SyntaticParserEngine.JJ)|| partOfSpeech.equals(SyntaticParserEngine.JJR)|| partOfSpeech.equals(SyntaticParserEngine.JJS)) {
 
             partOfSpeech = childNodeSpanningTree.getCoveredText();
             //Stiamo sfanculando i verbi di questo tipo perchè non ci servono e stiamo considerando una serie di verbi che potremmo avere nelle domande
             if(!partOfSpeech.equals("are")&&!partOfSpeech.equals("is")&&!partOfSpeech.equals("did")&&!partOfSpeech.equals("was")){
 
-
 //                System.out.println("Lemma: " + ((Token) childNodeSpanningTree).getLemma().getCoveredText());
 //                System.out.println("Lemma: " + ((Token) childNodeSpanningTree).getLemma().getCoveredText());
 //                System.out.println("Lemma: " + ((Token) childNodeSpanningTree).getLemma().toString());
-
 
                 if (SyntaticParserEngine.getInstance().getmLemmatizer()!=null)
                     partOfSpeech = ((Token) childNodeSpanningTree).getLemma().getValue();

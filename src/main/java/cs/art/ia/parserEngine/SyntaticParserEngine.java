@@ -34,6 +34,10 @@ public class SyntaticParserEngine {
     public static final String VBP = "VBP";
     public static final String VBZ = "VBZ";
 
+    public static final String JJ = "JJ";
+    public static final String JJS = "JJS";
+    public static final String JJR = "JJR";
+
 
     /***********************************************************************************************************************\
      LINGUA
@@ -93,6 +97,7 @@ public class SyntaticParserEngine {
      * Inizilizza la configurazione di base del nostro sistema che non sfrutta componenti aggiuntive
      */
     private void engineSimple() {
+        System.out.println("preparo parser");
         //TODO Cambiare il tipo di return in querylist. Rivedere il configuration manager per la tipologia di parser
         if(mParser == null || mSegmenter == null) {
             try {
@@ -108,6 +113,7 @@ public class SyntaticParserEngine {
                 // Crea il JCas
                 mUimaContainer = JCasFactory.createJCas();
             } catch (UIMAException e) {
+                System.out.println("Errore creazione parser");
                 e.printStackTrace();
             }
         }
@@ -117,6 +123,7 @@ public class SyntaticParserEngine {
      * Inizilizza la configurazione del nostro sistema che sfrutta la componente aggiuntiva dello Stemmer
      */
     private void engineStemmer() {
+        System.out.println("preparo parser");
         //TODO Cambiare il tipo di return in querylist. Rivedere il configuration manager per la tipologia di parser
         if(mParser == null || mSegmenter == null) {
             try {
@@ -143,6 +150,7 @@ public class SyntaticParserEngine {
      * Inizilizza la configurazione del nostro sistema che sfrutta la componente aggiuntiva del Lemmatizer
      */
     private void engineLemmatizer() {
+        System.out.println("preparo parser");
         //TODO Cambiare il tipo di return in querylist. Rivedere il configuration manager per la tipologia di parser
         if(mParser == null || mSegmenter == null) {
             try {

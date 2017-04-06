@@ -176,7 +176,8 @@ public class Kernel {
                 alert.showAndWait();}});
         }
 			for (QuerySPARQL querySPARQL : listQuerySPARQL) {
-		    System.out.println("Subject: "+ querySPARQL.getTripleRDF().getSubject().getValue());
+                System.out.println("querySPARQL: "+querySPARQL.getTripleRDF().toString());
+                System.out.println("Subject: "+ querySPARQL.getTripleRDF().getSubject().getValue());
             System.out.println("Predicate: "+ querySPARQL.getTripleRDF().getPredicate().getValue());
             System.out.println("Object: "+ querySPARQL.getTripleRDF().getObject().getValue());
 		}

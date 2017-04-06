@@ -75,6 +75,8 @@ public class AnswerManager {
 				}
 
 			}
+			//Questo controllo perchè nel caso di domande di tipo ask di cui non si ottiene il risultato questo controllo
+			//non fa altro che assegnare la risposta false in caso di assenza di risultato
 			if (var.equals("")&& querySPARQLResults.isEmpty()){
 				ARTNode nodeASK = new ARTURIResourceEmptyImpl("false");
 				QuerySPARQLResult querySPARQLResult = new QuerySPARQLResult(nodeASK);

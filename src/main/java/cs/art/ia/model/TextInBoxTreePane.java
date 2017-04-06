@@ -4,8 +4,6 @@ package cs.art.ia.model;
 import org.abego.treelayout.TreeForTreeLayout;
 import org.abego.treelayout.TreeLayout;
 
-import javafx.*;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
