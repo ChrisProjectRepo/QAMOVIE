@@ -1,5 +1,6 @@
 package cs.art.ia.kernel;
 
+import cs.art.ia.model.rdf.StringRDF;
 import cs.art.ia.parserEngine.SyntaticParser;
 import cs.art.ia.parserEngine.XmlParser;
 import cs.art.ia.synonymerEngine.Synonymer;
@@ -16,10 +17,13 @@ import it.uniroma2.art.owlart.exceptions.ModelCreationException;
 import it.uniroma2.art.owlart.exceptions.QueryEvaluationException;
 import it.uniroma2.art.owlart.exceptions.UnsupportedQueryLanguageException;
 import it.uniroma2.art.owlart.model.ARTNode;
+import it.uniroma2.art.owlart.model.ARTNodeFactory;
+import it.uniroma2.art.owlart.model.impl.ARTNodeFactoryImpl;
 import it.uniroma2.art.owlart.model.impl.ARTURIResourceEmptyImpl;
 import it.uniroma2.art.owlart.query.MalformedQueryException;
 
 import cs.art.ia.queryAnsweringEngine.AnswerManager;
+import it.uniroma2.art.owlart.vocabulary.XmlSchema;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ProgressBar;
@@ -97,7 +101,7 @@ public class Kernel {
                                 List<QuerySPARQLResult> querySPARQLResultList = new ArrayList<QuerySPARQLResult>();
                                 querySPARQLResultList = QARunner(input);
 
-                                if (querySPARQLResultList.isEmpty()) {
+                                if (querySPARQLResultList==null||querySPARQLResultList.isEmpty()) {
                                     controlleGui.setResult("No results were found.");
                                     System.out.println("No results were found.");
                                 } else {
@@ -175,13 +179,15 @@ public class Kernel {
                 alert.setContentText("Error, undefined parser");
                 alert.showAndWait();}});
         }
-			for (QuerySPARQL querySPARQL : listQuerySPARQL) {
+
+        if(listQuerySPARQL.size()>0){
+            for (QuerySPARQL querySPARQL : listQuerySPARQL) {
                 System.out.println("querySPARQL: "+querySPARQL.getTripleRDF().toString());
                 System.out.println("Subject: "+ querySPARQL.getTripleRDF().getSubject().getValue());
-            System.out.println("Predicate: "+ querySPARQL.getTripleRDF().getPredicate().getValue());
-            System.out.println("Object: "+ querySPARQL.getTripleRDF().getObject().getValue());
-		}
-
+                System.out.println("Predicate: "+ querySPARQL.getTripleRDF().getPredicate().getValue());
+                System.out.println("Object: "+ querySPARQL.getTripleRDF().getObject().getValue());
+            }
+        }
 		return listQuerySPARQL;
 	}
 
@@ -251,17 +257,18 @@ public class Kernel {
 
 		List<QuerySPARQL> listQuerySPARQL = parseQuestion(inputQuery);
 
-        List<QuerySPARQLResult> querySPARQLResult = executeQuery(listQuerySPARQL);
+		if (listQuerySPARQL.size()>0){
+            List<QuerySPARQLResult> querySPARQLResult = executeQuery(listQuerySPARQL);
+            if ( kernelEngine.getSynonimer() && (querySPARQLResult.isEmpty()||querySPARQLResult.get(0).getValue().getNominalValue().equals("false"))) {
+                querySPARQLResult = findResultsUsingSynonymer(listQuerySPARQL);
+            }
 
-        if ( kernelEngine.getSynonimer() && (querySPARQLResult.isEmpty()||querySPARQLResult.get(0).getValue().getNominalValue().equals("false"))) {
-            querySPARQLResult = findResultsUsingSynonymer(listQuerySPARQL);
+            if (true) {
+                Utility.visualizeResults(querySPARQLResult);
+            }
+            return querySPARQLResult;
         }
-
-        if (true) {
-            Utility.visualizeResults(querySPARQLResult);
-        }
-
-        return querySPARQLResult;
+        return null;
 	}
 
 
@@ -326,7 +333,9 @@ public class Kernel {
         }
         // Manage for ASK query: return false if no results has been found.
         if (askQuery) {
-            ARTNode nodeASK = new ARTURIResourceEmptyImpl("false");
+//            ARTNode nodeASK = new ARTURIResourceEmptyImpl("false");
+            ARTNodeFactory nodeFactory=new ARTNodeFactoryImpl();
+            ARTNode nodeASK=nodeFactory.createLiteral("false", XmlSchema.BOOLEAN);
             QuerySPARQLResult queryResult = new QuerySPARQLResult(nodeASK);
             queryResults.add(queryResult);
             return queryResults;

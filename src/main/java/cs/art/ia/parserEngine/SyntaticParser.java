@@ -14,6 +14,7 @@ import cs.art.ia.model.rdf.ElementRDF;
 import cs.art.ia.model.rdf.ResourceRDF;
 import cs.art.ia.model.rdf.TripleRDF;
 import cs.art.ia.model.rdf.TripleRDFComponent;
+import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.SBAR;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
@@ -100,7 +101,7 @@ public class SyntaticParser {
         System.out.println("Analizzo la question");
         while (iterAnn.hasNext()) {
             Annotation annotation = iterAnn.next();
-            if (annotation instanceof SBARQ || annotation instanceof SQ ) {
+            if (annotation instanceof SBARQ || annotation instanceof SQ || annotation instanceof SBAR) {
                 isQuestionInput = true;
 
                 if(D) log.info("Annotation è un simbolo terminale di tipo SBARQ");
@@ -155,11 +156,6 @@ public class SyntaticParser {
 
         if(Kernel.getIstance().getControlleGui().getShowTree().isSelected())
         printTreeForGUI(mBinaryTree);
-
-
-
-
-
 
 
 
@@ -272,7 +268,7 @@ public class SyntaticParser {
                     String partOfSpeech = ((Token) childNodeSpanningTree).getPos().getPosValue();
                     if(D) log.info("Nodo PoS Token, partOfSpeech: " + partOfSpeech + " coveredText: " + childNodeSpanningTree.getCoveredText());
 
-                    if (!predicate.equals(childNodeSpanningTree.getCoveredText())){
+                    if (!findInTree(predicateTree.getRoot(),childNodeSpanningTree.getCoveredText())){
                         //Crea un nuovo nodo Terminal e lo aggiunge all'albero di parsing BinaryTree
                         Terminal newChildNodeBinaryTree = new Terminal(partOfSpeech, new ArrayList<Node>(), nodeBinaryTree);
                         nodeBinaryTree.getChildren().add(newChildNodeBinaryTree);
@@ -356,6 +352,21 @@ public class SyntaticParser {
             }
         }
         firstTime=true;
+    }
+
+
+  private Boolean findInTree(Node node,String target){
+        Boolean result=false;
+      ArrayList<Node> children=node.getChildren();
+      if(children.size()>0){
+          for (Node n:children){
+            if(n.getData().equals(target))
+                result=true;
+            else
+                result=findInTree(n,target);
+          }
+      }
+      return result;
     }
 
     private void findAll(String pos,Annotation childNodeSpanningTree,Node nodeBinaryTree) {
