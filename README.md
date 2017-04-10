@@ -1,3 +1,35 @@
 # QAMOVIE
 
-Progetto di Intelligenza Artificiale 2 
+##Progetto di Intelligenza Artificiale 2 
+
+Avviando l'applicativo è possibile navigare nelle schermate QA e Settings: la prima permette di porre delle domande al sistema e vederne l'elaborato sull'area del log. Sulla sinistra invece vengono raccolte domande di esempio (selezionabili in modo da poterle eseguire) e domande recentemente poste, seguite dalle risposte ottenute dal sistema. La seconda, invece, permette di navigare tra le impostazioni del sistema:
+
+- Result:
+- - Show Advance Result: permette una stampa più dettagliata sul log che ne mostra i passaggi eseguiti per risolvere la query
+- - Show Tree Representation: mostra a schermo l'albero generato dal parser relativo alla domanda posta
+- - Show Tree RDF: mostra a schermo i tre sotto alberi relativi alla tripla RDF (utile per il debug)
+
+- Parsing Method:
+- - Template Parser: coincide con lo step 1 del progetto ed effettua il parsing della domanda seguendo i template predefiniti
+- - Parser: coincide con lo step 3 del progetto sfruttando il parser di OpenNLP che si appoggia a stemmer e lemmatizer
+- - Synonymer: permette di utilizzare il synonymer durante l'operazione di parsing della frase a supporto del metodo scelto tra i due elencati sopra
+
+- Ontology:
+- - Ontology Reference: permette di far scegliere all'utente a quale ontologia fare riferimento per la propria ricerca
+- - Filter Property: permette di far scegliere all'utente quale proprietà ricercare all'interno dell'ontologia scelta
+
+- Engine: permette di scegliere tra 3 differenti pipeline previste per affinare la ricerca a prescindere dall'ambito scelto
+- - Simple: coinvolge il parser OpenNLP, l'OpenNLP POS Tagger e l'OpenNLP Segmenter
+- - Stemmer: coinvolge il parser OpenNLP, l'OpenNLP POS Tagger, l'OpenNLP Segmenter e lo Snowball Stemmer
+- - Lemmatizer: coinvolge il parser OpenNLP, l'OpenNLP POS Tagger, l'OpenNLP Segmenter ed il Gate Lemmatizer
+
+Una volta decise le impostazioni preferite basterà scrivere la domanda che si vuole porre al sistema nella barra arancione presente in QA e premere Ask.
+
+Istruzioni in caso di errori in fase di esecuzione del programma:
+
+Potrebbe accadere che durante il pull da GitHub alcuni file all'interno della cartella Dict e la libreia Jaws.rar, vengano corrotti e quindi si rischia di ottenere degli errori sempre diversi in fase di esecuzione.    
+Si consiglia quindi, come prima possibile soluzione per gli errori, quella di riscaricare le dipendenze necessarie dai vari repositori e siti.
+
+- Jaws.rar ( https://github.com/jaytaylor/jaws )
+- Dict ( https://wordnet.princeton.edu/wordnet/download/current-version/ )
+
