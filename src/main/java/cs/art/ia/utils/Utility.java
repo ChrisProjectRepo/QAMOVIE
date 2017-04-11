@@ -101,13 +101,8 @@ public class Utility {
                 }
             } else if(artNode.isLiteral()){
                 String label = artNode.asLiteral().getLabel();
-                String lang = artNode.asLiteral().toString();
-
-                //Piccola manipolazione al fine di ottenere il tipo del dato ben formattato
-                String[] temp=lang.split("/");
-                String element=temp[temp.length-1];
-
-                String literalResult = label + " " + element.substring(0, element.length()-1);
+                String lang = artNode.asLiteral().getDatatype().getLocalName();
+                String literalResult = label + " " + lang;
                 System.out.println("literalResult: "+literalResult);
                 if(!noDuplicateResults.contains(literalResult)){
                     noDuplicateResults.add(literalResult);
