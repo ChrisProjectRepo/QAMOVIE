@@ -14,7 +14,7 @@ import cs.art.ia.model.rdf.ElementRDF;
 import cs.art.ia.model.rdf.ResourceRDF;
 import cs.art.ia.model.rdf.TripleRDF;
 import cs.art.ia.model.rdf.TripleRDFComponent;
-import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.SBAR;
+import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.*;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
@@ -25,9 +25,6 @@ import org.apache.uima.jcas.cas.FSArray;
 import org.apache.uima.jcas.tcas.Annotation;
 
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
-import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
-import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.SBARQ;
-import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.SQ;
 
 public class SyntaticParser {
 
@@ -45,6 +42,8 @@ public class SyntaticParser {
     private String subject=null;
     private String predicate=null;
     private String object=null;
+
+    private ArrayList<Annotation> arrayAnnotation=new ArrayList<>();
 
 
     /**
@@ -101,7 +100,7 @@ public class SyntaticParser {
         System.out.println("Analizzo la question");
         while (iterAnn.hasNext()) {
             Annotation annotation = iterAnn.next();
-            if (annotation instanceof SBARQ || annotation instanceof SQ || annotation instanceof SBAR) {
+            if (annotation instanceof SBARQ || annotation instanceof SQ || annotation instanceof SBAR||annotation instanceof S) {
                 isQuestionInput = true;
 
                 if(D) log.info("Annotation è un simbolo terminale di tipo SBARQ");
@@ -222,6 +221,7 @@ public class SyntaticParser {
     private void printTreeForGUI(BinaryTree tree){
         Kernel.getIstance().getControlleGui().viewTree(tree);
     }
+
 
     /**
      * Creiamo il sotto albero che ci permette di ottenere l'oggetto navigando nuovamente l'albero in modo da sfruttare varie annotazioni
@@ -499,8 +499,14 @@ public class SyntaticParser {
                     result=determinateTreeResource(n);
                 else if(determinateTreeResource(n).equals(":"))
                     result=result+""+determinateTreeResource(n);//facciamo questo trick perchè cosi i titoli con i due punti vengono scritti bene
+                    else{
+                    String res=determinateTreeResource(n);
+                    if(res.startsWith("'"))
+                        result=result+res;
                     else
-                    result=result+" "+determinateTreeResource(n);
+                                result=result+" "+res;
+                }
+
             }
         }else{
             if(!node.getData().equals("NP")&&!node.getData().equals("PP"))

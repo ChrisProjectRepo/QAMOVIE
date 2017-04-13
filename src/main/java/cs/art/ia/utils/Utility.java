@@ -91,18 +91,24 @@ public class Utility {
     public static List<String> getResultsWithoutDuplicates(List<QuerySPARQLResult> listResults){
         List<String> noDuplicateResults = new ArrayList<String>();
 
+
         for(QuerySPARQLResult queryResult : listResults){
             ARTNode artNode = queryResult.getValue();
             if(artNode.isURIResource()){
                 String localName = artNode.asURIResource().getLocalName();
                 System.out.println("Local Name: "+localName);
+                localName=localName.replaceAll("_"," ");
                 if(!noDuplicateResults.contains(localName)){
                     noDuplicateResults.add(localName);
                 }
             } else if(artNode.isLiteral()){
                 String label = artNode.asLiteral().getLabel();
-                String lang = artNode.asLiteral().getDatatype().getLocalName();
-                String literalResult = label + " " + lang;
+                String lang="";
+                String literalResult = label;
+                if(artNode.asLiteral().getDatatype()!=null){
+                    lang = artNode.asLiteral().getDatatype().getLocalName();
+                    literalResult+=" " + lang;
+                }
                 System.out.println("literalResult: "+literalResult);
                 if(!noDuplicateResults.contains(literalResult)){
                     noDuplicateResults.add(literalResult);
