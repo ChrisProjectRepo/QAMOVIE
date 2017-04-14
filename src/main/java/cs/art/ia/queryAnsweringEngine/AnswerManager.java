@@ -2,6 +2,8 @@ package cs.art.ia.queryAnsweringEngine;
 
 import cs.art.ia.model.QuerySPARQL;
 import cs.art.ia.model.QuerySPARQLResult;
+import it.uniroma2.art.owlart.model.ARTBNode;
+import it.uniroma2.art.owlart.model.ARTLiteral;
 import it.uniroma2.art.owlart.model.ARTNode;
 import it.uniroma2.art.owlart.model.ARTNodeFactory;
 import it.uniroma2.art.owlart.model.impl.ARTLiteralEmptyImpl;
@@ -38,7 +40,7 @@ public class AnswerManager {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<QuerySPARQLResult> executeQuery(List<QuerySPARQL> queries) throws Exception {
+	public List<QuerySPARQLResult> executeQuery(List<QuerySPARQL> queries,String input) throws Exception {
 
 		List<QuerySPARQLResult> querySPARQLResults = new ArrayList<QuerySPARQLResult>();
 
@@ -48,7 +50,7 @@ public class AnswerManager {
 
 			System.out.println("Var: " + var);
 
-			List<String> sparqlQuery = mQueryBuilder.buildQuery(queries);
+			List<String> sparqlQuery = mQueryBuilder.buildQuery(queries,input);
 
 			for (String singleQuery : sparqlQuery) {
 
@@ -65,16 +67,26 @@ public class AnswerManager {
 					}
 				}
 
+				if(input.contains("movies")||input.contains("films")){
+				var="movie";
+				}
+
 				if (results.get(var) != null) {
 					System.out.println("Result: " + results.get(var).toString());
-					for (ARTNode node : results.get(var)) {
-						System.out.println("ArtNode: " + node.getNominalValue());
-						if (!var.equals("")) {
-							QuerySPARQLResult querySPARQLResult = new QuerySPARQLResult(node);
-							querySPARQLResults.add(querySPARQLResult);
-							System.out.println("Risultato QuerySPARQL Nodo: " + node);
+					if(input.contains("many")||input.contains("Many")){
+						ARTNodeFactory nodeFactory=new ARTNodeFactoryImpl();
+						ARTNode nodeX=nodeFactory.createLiteral(Integer.toString(results.get(var).size()),XmlSchema.INTEGER);
+						QuerySPARQLResult querySPARQLResult = new QuerySPARQLResult(nodeX);
+						querySPARQLResults.add(querySPARQLResult);
+					}else{
+						for (ARTNode node : results.get(var)) {
+							System.out.println("ArtNode: " + node.getNominalValue());
+							if (!var.equals("")) {
+								QuerySPARQLResult querySPARQLResult = new QuerySPARQLResult(node);
+								querySPARQLResults.add(querySPARQLResult);
+								System.out.println("Risultato QuerySPARQL Nodo: " + node);
+							}
 						}
-
 					}
 				}
 
@@ -102,21 +114,19 @@ public class AnswerManager {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<QuerySPARQLResult> executeSynonymerQuery(List<QuerySPARQL> queries,List<String> predicateSynonymer) throws Exception {
+	public List<QuerySPARQLResult> executeSynonymerQuery(List<QuerySPARQL> queries,List<String> predicateSynonymer,String input) throws Exception {
 
         List<QuerySPARQLResult> queryResults = new ArrayList<QuerySPARQLResult>();
 
         if (!queries.isEmpty()) {
 
-
             String var = mQueryBuilder.determinateContest(queries);
-
 
             for (String pre : predicateSynonymer) {
 
                 QuerySPARQL query = queries.get(0);
 
-                List<String> sparqlQuery = mQueryBuilder.buildQuerySynonymer(query.getTripleRDF().getSubject(), pre, query.getTripleRDF().getObject());
+                List<String> sparqlQuery = mQueryBuilder.buildQuerySynonymer(query.getTripleRDF().getSubject(), pre, query.getTripleRDF().getObject(),input);
 
                 for (String singleQuery : sparqlQuery) {
 
@@ -132,20 +142,33 @@ public class AnswerManager {
                             return queryResults;
                         }
                     }
+
+					if(input.contains("movies")||input.contains("films")){
+						var="movie";
+					}
+
                     // Estrai i valori della variabile principale dalla mappa dei
                     // risultati
                     if (results.get(var) != null) {
-                        System.out.println("Result: " + results.get(var).toString());
-                        for (ARTNode node : results.get(var)) {
-                            System.out.println("ArtNode: " + node.getNominalValue());
-                            if (!var.equals("")) {
-                                QuerySPARQLResult queryResult = new QuerySPARQLResult(node);
-                                queryResults.add(queryResult);
-                                System.out.println("Risultato Query Nodo: " + node);
-                                return queryResults;
-                            }
+						System.out.println("Result: " + results.get(var).toString());
+							if(input.contains("many")||input.contains("Many")){
+								ARTNodeFactory nodeFactory=new ARTNodeFactoryImpl();
+								ARTNode nodeX=nodeFactory.createLiteral(Integer.toString(results.get(var).size()),XmlSchema.INTEGER);
+								QuerySPARQLResult querySPARQLResult = new QuerySPARQLResult(nodeX);
+								queryResults.add(querySPARQLResult);
 
-                        }
+						}else{
+								for (ARTNode node : results.get(var)) {
+									System.out.println("ArtNode: " + node.getNominalValue());
+									if (!var.equals("")) {
+										QuerySPARQLResult queryResult = new QuerySPARQLResult(node);
+										queryResults.add(queryResult);
+										System.out.println("Risultato Query Nodo: " + node);
+										return queryResults;
+									}
+
+								}
+						}
                     }
                 }
 

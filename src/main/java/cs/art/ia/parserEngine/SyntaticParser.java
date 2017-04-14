@@ -43,7 +43,6 @@ public class SyntaticParser {
     private String predicate=null;
     private String object=null;
 
-    private ArrayList<Annotation> arrayAnnotation=new ArrayList<>();
 
 
     /**
@@ -152,10 +151,8 @@ public class SyntaticParser {
             }
         }
 
-
         if(Kernel.getIstance().getControlleGui().getShowTree().isSelected())
         printTreeForGUI(mBinaryTree);
-
 
 
         if(isQuestionInput != true) {
@@ -248,11 +245,11 @@ public class SyntaticParser {
                     NonTerminal newChildNodeBinaryTree = new NonTerminal(childNodeSpanningTree.getClass().getSimpleName(), new ArrayList<Node>(), nodeBinaryTree);
                     nodeBinaryTree.getChildren().add(newChildNodeBinaryTree);
                     String partOfSpeech =  childNodeSpanningTree.getClass().getSimpleName();
-                    if(!partOfSpeech.equals("NP")&&!partOfSpeech.equals("PP")){
+                    if(!partOfSpeech.equals("NP")&&!partOfSpeech.equals("PP")&&!partOfSpeech.equals("SBAR")){
                         if(D) log.info("NonTerminal: nodo Non Terminale aggiunto a BinaryTree: " + newChildNodeBinaryTree.getData());
                         // Esegue ricorsivamente la visita
                         createObjectTree(childNodeSpanningTree, newChildNodeBinaryTree);
-                    }else{
+                    } else{
                         if(firstTime){
                             objectTree = new BinaryTree(new Node("ROOT", new ArrayList<Node>(), null));
                             firstTime=false;
@@ -282,6 +279,7 @@ public class SyntaticParser {
         //Mettendo utilizzato per evitare di fermarci in sotto alberi che non ci interessano
         if(nodeBinaryTree.getData().equals("ROOT"))
             firstTime=true;
+//        arrayAnnotation.add(nodeBinaryTree);
     }
 
     /**
@@ -309,7 +307,6 @@ public class SyntaticParser {
 
                         String partOfSpeech = childNodeSpanningTree.getClass().getSimpleName();
                         if (!partOfSpeech.equals(SyntaticParserEngine.ADJP)) {
-
                             if (partOfSpeech.equals("PP")) {
                                 break;
                             }
@@ -533,7 +530,9 @@ public class SyntaticParser {
         if(object!=null)
             objectTriple=new ResourceRDF(object);
 
-        mQueryList.add(new QuerySPARQL(new TripleRDF(subjectTriple,predicateTriple,objectTriple)));
+        if(predicate!=null&&object!=null) {
+            mQueryList.add(new QuerySPARQL(new TripleRDF(subjectTriple,predicateTriple,objectTriple)));
+        }
     }
 
 }

@@ -26,6 +26,7 @@ import it.uniroma2.art.owlart.sesame2impl.models.conf.Sesame2ModelConfiguration;
 import java.util.*;
 
 import com.google.common.base.CaseFormat;
+import org.openrdf.query.algebra.Str;
 
 /**
  *
@@ -51,7 +52,7 @@ public class QueryManager {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<String> buildQuery(List<QuerySPARQL> queries) throws Exception {
+	public List<String> buildQuery(List<QuerySPARQL> queries,String input) throws Exception {
 
 		TripleRDFComponent subject = null;
 		TripleRDFComponent predicate = null;
@@ -76,7 +77,9 @@ public class QueryManager {
 
 				// Costruzione intestazione query
 				transformedQuery.append(SPARQL_SELECT_LABEL);
-				if (subject.getValue().equals("1"))
+				if(input.contains("movies")||input.contains("films"))
+					transformedQuery.append("?movie (count( ?1) as ?countReg )");
+				else if (subject.getValue().equals("1"))
 					transformedQuery.append("?1 (count( ?1) as ?countReg )");
 				else
 					transformedQuery.append("?movie (count( ?movie) as ?countReg )");
@@ -89,7 +92,10 @@ public class QueryManager {
 				transformedQuery.append(". \n");
 				transformedQuery.append("FILTER ( regex(str(?abstract), \"^.*" + object.getValue() + ".*\"))\n");
 				transformedQuery.append("}");
-				transformedQuery.append("order by desc(?countReg) LIMIT 1");
+				if(input.contains("movies")||input.contains("films"))
+					transformedQuery.append("order by desc(?countReg)");
+				else
+					transformedQuery.append("order by desc(?countReg) LIMIT 1");
 
 				querySparql.add(transformedQuery.toString());
 			}
@@ -113,7 +119,7 @@ public class QueryManager {
 	 * @throws ModelCreationException
 	 * @throws ModelAccessException
 	 */
-	public List<String> buildQuerySynonymer(TripleRDFComponent subject, String newPredicate, TripleRDFComponent object) throws UnsupportedQueryLanguageException, QueryEvaluationException, MalformedQueryException, ModelCreationException, ModelAccessException {
+	public List<String> buildQuerySynonymer(TripleRDFComponent subject, String newPredicate, TripleRDFComponent object,String input) throws UnsupportedQueryLanguageException, QueryEvaluationException, MalformedQueryException, ModelCreationException, ModelAccessException {
 
 			List<String> querySparql=new ArrayList<String>();
 
@@ -127,7 +133,10 @@ public class QueryManager {
 
 					// Costruzione intestazione query
 					transformedQuery.append(SPARQL_SELECT_LABEL);
-					if (subject.getValue().equals("1"))
+
+					if(input.contains("movies")||input.contains("films"))
+						transformedQuery.append("?movie (count( ?1) as ?countReg )");
+					else if (subject.getValue().equals("1"))
 						transformedQuery.append("?1 (count( ?1) as ?countReg )");
 					else
 						transformedQuery.append("?movie (count( ?movie) as ?countReg )");
@@ -140,7 +149,10 @@ public class QueryManager {
 					transformedQuery.append(". \n");
 					transformedQuery.append("FILTER ( regex(str(?abstract), \"^.*" + object.getValue() + ".*\"))\n");
 					transformedQuery.append("}");
-					transformedQuery.append("order by desc(?countReg) LIMIT 1");
+					if(input.contains("movies")||input.contains("films"))
+						transformedQuery.append("order by desc(?countReg)");
+					else
+						transformedQuery.append("order by desc(?countReg) LIMIT 1");
 
 					querySparql.add(transformedQuery.toString());
 				}
@@ -149,13 +161,6 @@ public class QueryManager {
 			return querySparql;
 		}
 
-
-	/**
-	 * Valuta in relazione alla query fornita dalla valutazione dell'input se si tratta o meno di una asl query valutando il soggetto
-	 * @param queries
-	 * @return
-	 * @throws Exception
-	 */
 	public String determinateContest(List<QuerySPARQL> queries) throws Exception {
 
 		if(queries==null)
@@ -167,11 +172,11 @@ public class QueryManager {
 			TripleRDFComponent subject = querySPARQL.getTripleRDF().getSubject();
 			TripleRDFComponent predicate = querySPARQL.getTripleRDF().getPredicate();
 			TripleRDFComponent object = querySPARQL.getTripleRDF().getObject();
-			
+
 			if((subject==null)|(predicate==null)|(object==null))
 				throw new Exception("Il soggetto,predicato oppure oggetto della tripla sono null");
-			
-		
+
+
 			if (subject instanceof ElementRDF) {
 				var = subject.getValue();
 				break;
@@ -185,8 +190,10 @@ public class QueryManager {
 				break;
 			}
 		}
+
 		return var;
 	}
+
 
 	public boolean yesOrNoQuery(List<QuerySPARQL> querySPARQL) throws Exception {
 		String string = determinateContest(querySPARQL);

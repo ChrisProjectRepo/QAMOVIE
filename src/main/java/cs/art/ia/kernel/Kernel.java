@@ -44,6 +44,7 @@ public class Kernel {
     private AnswerManager answerManager;
     private static KernelEngine kernelEngine;
     private Synonymer synonimer;
+    private String input;
 
 
     public static Kernel getIstance(){
@@ -77,7 +78,7 @@ public class Kernel {
      */
     public void run(){
 
-        String input=controlleGui.getAskField().getText();
+        input=controlleGui.getAskField().getText();
 
                         if (input.equals("") || input.equals(" ")) {
                             System.out.println("Il testo è "+input);
@@ -102,8 +103,9 @@ public class Kernel {
                                 querySPARQLResultList = QARunner(input);
 
                                 if (querySPARQLResultList==null||querySPARQLResultList.isEmpty()) {
-                                    controlleGui.setResult("No results were found.");
+                                    controlleGui.setResult("No results were found. Check the Sentence.");
                                     System.out.println("No results were found.");
+                                    System.out.println("Possibile errore nel parsing dell'input e nella creazione della query (Assenza Query)");
                                 } else {
                                     List<String> noDuplicateResults = Utility.getResultsWithoutDuplicates(querySPARQLResultList);
 
@@ -169,13 +171,15 @@ public class Kernel {
             try {
                 listQuerySPARQL = syntaticParser.parseInput(input);
             } catch (NullPointerException e) {
+                Platform.runLater(new Runnable(){@Override public void run() {
+                    Alert alert=new Alert(Alert.AlertType.ERROR);
+                    alert.setContentText("Parsing Sentence Exception");
+                    alert.showAndWait();}});
                 System.out.println(e.toString());
             }
         } else {
-
-            Platform.runLater(new Runnable(){@Override public void run() {
+                Platform.runLater(new Runnable(){@Override public void run() {
                 Alert alert=new Alert(Alert.AlertType.ERROR);
-
                 alert.setContentText("Error, undefined parser");
                 alert.showAndWait();}});
         }
@@ -201,7 +205,7 @@ public class Kernel {
     private List<QuerySPARQLResult> executeQuery(List<QuerySPARQL> listQuerySPARQL) throws Exception {
 		List<QuerySPARQLResult> querySPARQLResults = null;
 		try {
-			querySPARQLResults = answerManager.executeQuery(listQuerySPARQL);
+			querySPARQLResults = answerManager.executeQuery(listQuerySPARQL,input);
 		} catch (UnsupportedQueryLanguageException | QueryEvaluationException | MalformedQueryException | ModelCreationException | ModelAccessException e) {
 			System.out.println(e.toString());
 		}
@@ -378,7 +382,7 @@ public class Kernel {
 
         // If results are found, return them.
         if (synonymToMatch.size()>0) {
-            queryResults=answerManager.executeSynonymerQuery(listQuery,synonymToMatch);
+            queryResults=answerManager.executeSynonymerQuery(listQuery,synonymToMatch,input);
             if (!queryResults.isEmpty()) {
                 return queryResults;
             }
@@ -435,7 +439,7 @@ public class Kernel {
             // If results are found, return them.
             if (hyponymsToMatch.size()>0) {
 //                getUiManager().getGui().addLog("Results founded at depth level: " + 0 + ".\n");
-                queryResults=answerManager.executeSynonymerQuery(listQuery,hyponymsToMatch);
+                queryResults=answerManager.executeSynonymerQuery(listQuery,hyponymsToMatch,input);
                 if (!queryResults.isEmpty()) {
                     return queryResults;
                 }
@@ -489,7 +493,7 @@ public class Kernel {
 
             if (hypernymsToMatch.size()>0) {
 //                getUiManager().getGui().addLog("Results founded at depth level: " + 0 + ".\n");
-                queryResults=answerManager.executeSynonymerQuery(listQuery,hypernymsToMatch);
+                queryResults=answerManager.executeSynonymerQuery(listQuery,hypernymsToMatch,input);
                 if (!queryResults.isEmpty()) {
                     return queryResults;
                 }
