@@ -1,5 +1,6 @@
 # QAMOVIE
 ### Progetto di Intelligenza Artificiale 2
+
 ## Descrizione breve:
 
 Implementazione di un sistema di Question Answering orientato all'universo cinematografico, in grado di tradurre domande da linguaggio naturale in query SPARQL, sfruttando una ontologia dedicata.
