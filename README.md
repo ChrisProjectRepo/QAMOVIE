@@ -1,5 +1,5 @@
 # QAMOVIE
-
+### Progetto di Intelligenza Artificiale 2
 ## Descrizione breve:
 
 Implementazione di un sistema di Question Answering orientato all'universo cinematografico, in grado di tradurre domande da linguaggio naturale in query SPARQL, sfruttando una ontologia dedicata.
@@ -13,7 +13,7 @@ Al termine di ciascun step la query viene convertita in linguaggio SPARQL tramit
 Il core del sistema risiede nel parser di base che sfrutta le librerie di OpenNLP, così come avviene per POS-Tagger e segmenter. Il lemmatizer sfrutta le librerie di Gate Lemmatizer, mentre lo stemmer le librerie di Snowball Stemmer.
 La parte grafica è stata 
 
-## Progetto di Intelligenza Artificiale 2 
+## Guida all'uso
 
 Avviando l'applicativo è possibile navigare nelle schermate QA e Settings: la prima permette di porre delle domande al sistema e vederne l'elaborato sull'area del log. Sulla sinistra invece vengono raccolte domande di esempio (selezionabili in modo da poterle eseguire) e domande recentemente poste, seguite dalle risposte ottenute dal sistema. La seconda, invece, permette di navigare tra le impostazioni del sistema:
 
