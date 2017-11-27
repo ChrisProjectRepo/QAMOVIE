@@ -47,3 +47,5 @@ Si consiglia quindi, come prima possibile soluzione per gli errori, quella di ri
 - Jaws.rar ( https://github.com/jaytaylor/jaws )
 - Dict ( https://wordnet.princeton.edu/wordnet/download/current-version/ )
 
+## Documentazione
+https://github.com/xXCiccioXx/QAMOVIE/blob/master/ia2_ppt3.pdf
