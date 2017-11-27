@@ -1,5 +1,16 @@
 # QAMOVIE
 
+##Descrizione breve:
+
+Implementazione di un sistema di Question Answering orientato all'universo cinematografico, in grado di tradurre domande da linguaggio naturale in query SPARQL, sfruttando una ontologia dedicata.
+L'applicazione è stata realizzata interamente in Java in 3 step logici:
+- Template parser: permette l'elaborazione immediata di Wh- questions tramite l'analisi di alcuni template di esempio, operando un pattern matching per il riconoscimento (tramite espressioni regolari ad-hoc) di: soggetto, predicato ed oggetto relativo al predicato; 
+- Synonymer: per la gestione dei fenomeni di sinonimia, iponimia ed iperonimia della domanda di input, sfruttando il noto database semantico-lessicale di WordNet;
+- Parser sintattico: elabora diversamente la domanda di input tramite analisi sintattica per raffinarne la ricerca di una risposta inerente; utilizza il framework UIMA per l'analisi e la gestione delle informazioni semi-strutturate tramite JCAS.
+Al termine di ciascun step la query viene convertita in linguaggio SPARQL tramite le API fornite da OWL-ART ed inviata a Dbpedia; la risposta ritenuta più affidabile (secondo un confronto delle risposte ottenute da Dbpedia) viene infine restituita in output.
+Il core del sistema risiede nel parser di base che sfrutta le librerie di OpenNLP, così come avviene per POS-Tagger e segmenter. Il lemmatizer sfrutta le librerie di Gate Lemmatizer, mentre lo stemmer le librerie di Snowball Stemmer.
+La parte grafica è stata 
+
 ##Progetto di Intelligenza Artificiale 2 
 
 Avviando l'applicativo è possibile navigare nelle schermate QA e Settings: la prima permette di porre delle domande al sistema e vederne l'elaborato sull'area del log. Sulla sinistra invece vengono raccolte domande di esempio (selezionabili in modo da poterle eseguire) e domande recentemente poste, seguite dalle risposte ottenute dal sistema. La seconda, invece, permette di navigare tra le impostazioni del sistema:
